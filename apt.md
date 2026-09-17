@@ -128,8 +128,16 @@ sudo apt remove default-jre
 ### 删除包及配置文件
 
 ```shell
-sudo apt purge mysql-common
+sudo apt purge --autoremove mysql-common
 
+# --autoremove 删除依赖
+```
+
+### **清理所有不再需要的依赖**
+
+```shell
+sudo apt autoremove --purge
+# TODO
 ```
 
 ### 格式转换
@@ -144,5 +152,11 @@ sudo apt modernize-sources
 
 ```shell
 sudo apt -v
+```
+
+### **清理 APT 缓存**
+
+```shell
+sudo apt clean
 ```
 

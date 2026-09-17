@@ -2,3 +2,6 @@
 
 [apt](./apt.md)
 
+[fstab](./fstab.md)
+
+[postgresql](./postgresql.md)
