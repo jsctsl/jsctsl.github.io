@@ -97,16 +97,6 @@ Created symlink '/etc/systemd/system/multi-user.target.wants/postgresql.service'
 Processing triggers for man-db (2.13.1-1) ...
 ```
 
-### ~~禁用集群~~
-```shell
-cat /etc/postgresql-common/createcluster.conf | grep '^create_main_cluster';
-#create_main_cluster = true
-
-nano /etc/postgresql-common/createcluster.conf
-create_main_cluster = false
-
-```
-
 
 
 ```shell
@@ -230,11 +220,6 @@ Processing triggers for libc-bin (2.41-12+deb13u2) ...
 
 ```
 
-### 创建集群
-
-```shell
-sudo pg_createcluster 16 main
-```
 
 ```
 Creating new PostgreSQL cluster 16/main ...
@@ -328,3 +313,68 @@ nano /etc/fstab
 reboot
 ```
 
+
+### 备份
+
+```
+cd /data/backup
+
+# 备份数据库 james 为文件 james.dump 
+# -F c 自定义文件格式
+# -O 跳过所有者设置 (不执行 ALTER ... OWNER TO ... 这类语句)
+# -f james.dump 备份文件
+# -d james 数据库名称
+sudo pg_dump -h localhost -p 5432 -U postgres -F c -O -f james.dump -d james
+
+
+# =============
+# && gzip -kf james.tar 备份成功后再压缩
+sudo pg_dump -h localhost -p 5432 -U postgres -F t -O -f james.tar -d james && gzip -kf james.tar
+
+```
+
+### 恢复
+
+```
+sudo -u postgres psql
+
+# LOGIN 登录权限
+# NOSUPERUSER 非超级用户
+# INHERIT 从父类继承权限
+# CREATEDB 创建数据库权限
+# NOCREATEROLE 无创建角色权限
+# REPLICATION 复制备份权限
+# PASSWORD 密码
+CREATE ROLE jamesmail WITH
+  LOGIN
+  NOSUPERUSER
+  INHERIT
+  CREATEDB
+  NOCREATEROLE
+  REPLICATION
+  PASSWORD 'XXXX';
+
+# --role=jamesmail 
+# -v -v 输出更详细的调试信息(并非所有版本都支持) OR 使用 --verbose 选项
+# -C -d postgres 使用备份文件中的创建数据库命令 -d postgres 作为跳板连接数据库使用
+# james.dump 备份文件
+pg_restore -h localhost -p 5432 -U postgres -F c --role=jamesmail -v -v -C -d postgres james.dump 
+```
+
+
+## ~~禁用集群~~
+```shell
+cat /etc/postgresql-common/createcluster.conf | grep '^create_main_cluster';
+#create_main_cluster = true
+
+nano /etc/postgresql-common/createcluster.conf
+create_main_cluster = false
+
+```
+
+
+## ~~创建集群~~
+
+```shell
+sudo pg_createcluster 16 main
+```
