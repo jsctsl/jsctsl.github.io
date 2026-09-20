@@ -4,6 +4,7 @@
 
 ```shell
 lsblk
+# 可添加参数 -f
 ```
 
 ```
@@ -32,5 +33,14 @@ mount /dev/vdb1 /mnt/data
 umount /mnt/data
 # 或
 umount /dev/vdb1
+```
+
+## 自动挂载
+
+```shell
+sudo nano /etc/fstab
+## <file system> <mount point>   <type>  <options>       <dump>  <pass>
+sudo systemctl daemon-reload
+sudo mount -a
 ```
 

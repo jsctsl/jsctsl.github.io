@@ -267,8 +267,8 @@ listen_addresses = '*'		# what IP address(es) to listen on;
 ```shell
 echo 'host all all 192.168.200.0/24 scram-sha-256' >> /etc/postgresql/16/main/pg_hba.conf
 
-# /etc/fstab 文件追加下行内容
-# host all all 192.168.200.0/24 scram-sha-256
+# /etc/postgresql/16/main/pg_hba.conf 文件追加下行内容
+# host all all 221.181.179.52/32 scram-sha-256
 ```
 
 #### 修改密码
@@ -304,13 +304,14 @@ postgres=# select usename, passwd from pg_shadow;
 mkdir -p /data/postgresql/16/main
 chown postgres:postgres /data/postgresql/16/main
 chmod 700 /data/postgresql/16/main
-
+systemctl stop postgresql@16-main
 mv /var/lib/postgresql/16/main/* /data/postgresql/16/main
 
 nano /etc/fstab
   /data/postgresql/16/main /var/lib/postgresql/16/main none bind 0 0
 
-reboot
+systemctl daemon-reload
+mount -a
 ```
 
 
@@ -361,8 +362,76 @@ CREATE ROLE jamesmail WITH
 pg_restore -h localhost -p 5432 -U postgres -F c --role=jamesmail -v -v -C -d postgres james.dump 
 ```
 
+## ~~变更服务单元(未完成)~~
+
+```shell
+cat /usr/lib/systemd/system/postgresql@.service
+
+## 脚本问题？
+ExecStart=-/usr/bin/pg_ctlcluster --skip-systemctl-redirect %i start
+
+
+
+
+
+sudo systemctl edit postgresql@16-main.service
+# 添加内容
+[Service]
+Type=notify
+NotifyAccess=all
+#TimeoutStartSec=30
+#TimeoutStopSec=60
+#TimeoutSec=infinity
+
+sudo systemctl daemon-reload
+
+# 查看结果
+sudo systemctl cat postgresql@16-main.service
+
+sudo systemctl show postgresql@16-main.service | grep Timeout
+# 输出内容
+TimeoutStartUSec=infinity
+TimeoutStopUSec=2min
+TimeoutAbortUSec=2min
+TimeoutStartFailureMode=terminate
+TimeoutStopFailureMode=terminate
+TimeoutCleanUSec=infinity
+JobTimeoutUSec=infinity
+JobRunningTimeoutUSec=infinity
+JobTimeoutAction=none
+
+
+sudo systemctl restart postgresql@16-main.service
+# 输出内容
+● postgresql@16-main.service - PostgreSQL Cluster 16-main
+     Loaded: loaded (/usr/lib/systemd/system/postgresql@.service; enabled-runtime; preset: enabled)
+    Drop-In: /etc/systemd/system/postgresql@16-main.service.d
+             └─override.conf
+     Active: active (running) since Sun 2026-09-20 05:25:27 UTC; 8min ago
+ Invocation: 3287bd8f1fef45c48bf27b771267ff35
+   Main PID: 1731 (postgres)
+      Tasks: 6 (limit: 19132)
+     Memory: 19.1M (peak: 27.4M)
+        CPU: 314ms
+     CGroup: /system.slice/system-postgresql.slice/postgresql@16-main.service
+             ├─1731 /usr/lib/postgresql/16/bin/postgres -D /var/lib/postgresql/16/main -c config_file=/etc/postgresql/16/main/postgresql.conf
+             ├─1732 "postgres: 16/main: checkpointer "
+             ├─1733 "postgres: 16/main: background writer "
+             ├─1735 "postgres: 16/main: walwriter "
+             ├─1736 "postgres: 16/main: autovacuum launcher "
+             └─1737 "postgres: 16/main: logical replication launcher "
+
+Sep 20 05:25:25 debian13 systemd[1]: Starting postgresql@16-main.service - PostgreSQL Cluster 16-main...
+Sep 20 05:25:27 debian13 systemd[1]: Started postgresql@16-main.service - PostgreSQL Cluster 16-main.
+
+
+
+```
+
+
 
 ## ~~禁用集群~~
+
 ```shell
 cat /etc/postgresql-common/createcluster.conf | grep '^create_main_cluster';
 #create_main_cluster = true

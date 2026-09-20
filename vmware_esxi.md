@@ -5,7 +5,7 @@
 # {passwd}  密码
 # {ip}      vmware esxi 服务器IP地址
 
-C:\Users\chensheng\bin\ovftool>ovftool.exe --noSSLVerify vi://{usename}:{passwd}@{ip}/debian13 "C:\BarCodeReader\debian13.ova"
+C:\Users\chensheng\bin\ovftool>ovftool.exe --noSSLVerify vi://{usename}:{passwd}@{ip}/{vmname} "C:\BarCodeReader\{vmname}.ova"
 
 ```
 
