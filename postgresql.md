@@ -360,7 +360,172 @@ CREATE ROLE jamesmail WITH
 # -C -d postgres 使用备份文件中的创建数据库命令 -d postgres 作为跳板连接数据库使用
 # james.dump 备份文件
 pg_restore -h localhost -p 5432 -U postgres -F c --role=jamesmail -v -v -C -d postgres james.dump 
+
+
+
+
+# ON Windows 10 Postgresql 16 used DataGrip 2026.2.6 log
+"C:/Program Files/PostgreSQL/16/bin/pg_restore.exe" --dbname=postgres --format=t --single-transaction --username=postgres --host=localhost --port=5432 C:\Users\chensheng\Desktop\z\postgres_localhost-2026_10_15_23_28_29-dump.tar
 ```
+
+## pgAdmin4
+
+```
+windows7支持的版本v4.30
+
+参考地址
+https://pgadmin-archive.postgresql.org/pgadmin4/v4.30/windows/pgadmin4-4.30-x64.exe
+
+
+```
+
+## 表行数视图
+
+```
+# 查看登录用户全部表
+root@debian13:/usr/bin# su - postgres
+postgres@debian13:~$ psql
+psql (16.15 (Debian 16.15-1.pgdg13+2))
+Type "help" for help.
+
+postgres=# \c james
+You are now connected to database "james" as user "postgres".
+
+james=# \d pg_catalog.pg_tables;
+              View "pg_catalog.pg_tables"
+   Column    |  Type   | Collation | Nullable | Default 
+-------------+---------+-----------+----------+---------
+ schemaname  | name    |           |          | 
+ tablename   | name    |           |          | 
+ tableowner  | name    |           |          | 
+ tablespace  | name    |           |          | 
+ hasindexes  | boolean |           |          | 
+ hasrules    | boolean |           |          | 
+ hastriggers | boolean |           |          | 
+ rowsecurity | boolean |           |          | 
+
+postgres=# select tablename from pg_catalog.pg_tables where tableowner = 'james';
+           tablename            
+--------------------------------
+ james_domain
+ james_mail_property
+ james_mail_userflag
+ james_mailbox_annotation
+ james_mail_repos
+ james_mail_store
+ james_max_domain_message_count
+ james_max_domain_storage
+ james_max_global_message_count
+ james_max_global_storage
+ james_max_user_message_count
+ james_max_user_storage
+ james_quota_currentquota
+ james_recipient_rewrite
+ james_sieve_quota
+ james_sieve_script
+ james_subscription
+ james_user
+ openjpa_sequence_table
+ james_mailbox
+ james_mail
+(21 rows)
+
+james=# \d information_schema.tables;
+                                 View "information_schema.tables"
+            Column            |               Type                | Collation | Nullable | Default 
+------------------------------+-----------------------------------+-----------+----------+---------
+ table_catalog                | information_schema.sql_identifier |           |          | 
+ table_schema                 | information_schema.sql_identifier |           |          | 
+ table_name                   | information_schema.sql_identifier |           |          | 
+ table_type                   | information_schema.character_data |           |          | 
+ self_referencing_column_name | information_schema.sql_identifier |           |          | 
+ reference_generation         | information_schema.character_data |           |          | 
+ user_defined_type_catalog    | information_schema.sql_identifier |           |          | 
+ user_defined_type_schema     | information_schema.sql_identifier |           |          | 
+ user_defined_type_name       | information_schema.sql_identifier |           |          | 
+ is_insertable_into           | information_schema.yes_or_no      |           |          | 
+ is_typed                     | information_schema.yes_or_no      |           |          | 
+ commit_action                | information_schema.character_data |           |          | 
+
+
+```
+
+
+
+```
+# pgAdmin4 query tool 
+
+-- drop view if exists james_table_rows_view;
+create or replace view james_table_rows_view as 
+select 'james_domain' as tablename,count(1) as rownum from james_domain union 
+select 'james_mail_property' as tablename,count(1) as rownum from james_mail_property union 
+select 'james_mail_userflag' as tablename,count(1) as rownum from james_mail_userflag union 
+select 'james_mailbox_annotation' as tablename,count(1) as rownum from james_mailbox_annotation union 
+select 'james_mail_repos' as tablename,count(1) as rownum from james_mail_repos union 
+select 'james_mail_store' as tablename,count(1) as rownum from james_mail_store union 
+select 'james_max_domain_message_count' as tablename,count(1) as rownum from james_max_domain_message_count union 
+select 'james_max_domain_storage' as tablename,count(1) as rownum from james_max_domain_storage union 
+select 'james_max_global_message_count' as tablename,count(1) as rownum from james_max_global_message_count union 
+select 'james_max_global_storage' as tablename,count(1) as rownum from james_max_global_storage union 
+select 'james_max_user_message_count' as tablename,count(1) as rownum from james_max_user_message_count union 
+select 'james_max_user_storage' as tablename,count(1) as rownum from james_max_user_storage union 
+select 'james_quota_currentquota' as tablename,count(1) as rownum from james_quota_currentquota union 
+select 'james_recipient_rewrite' as tablename,count(1) as rownum from james_recipient_rewrite union 
+select 'james_sieve_quota' as tablename,count(1) as rownum from james_sieve_quota union 
+select 'james_sieve_script' as tablename,count(1) as rownum from james_sieve_script union 
+select 'james_subscription' as tablename,count(1) as rownum from james_subscription union 
+select 'james_user' as tablename,count(1) as rownum from james_user union 
+select 'openjpa_sequence_table' as tablename,count(1) as rownum from openjpa_sequence_table union 
+select 'james_mailbox' as tablename,count(1) as rownum from james_mailbox union 
+select 'james_mail' as tablename,count(1) as rownum from james_mail; 
+```
+
+```
+
+james=# select table_catalog,table_schema,table_name,table_type from information_schema.tables where table_schema = 'public' and  table_catalog = 'james';
+select table_catalog,table_schema,table_name,table_type from information_schema.tables where table_schema = 'public' and  table_catalog = 'james';
+ table_catalog | table_schema |           table_name           | table_type 
+---------------+--------------+--------------------------------+------------
+ james         | public       | james_domain                   | BASE TABLE
+ james         | public       | james_mail_property            | BASE TABLE
+ james         | public       | james_mail_userflag            | BASE TABLE
+ james         | public       | james_mailbox_annotation       | BASE TABLE
+ james         | public       | james_mail_repos               | BASE TABLE
+ james         | public       | james_mail_store               | BASE TABLE
+ james         | public       | james_max_domain_message_count | BASE TABLE
+ james         | public       | james_max_domain_storage       | BASE TABLE
+ james         | public       | james_max_global_message_count | BASE TABLE
+ james         | public       | james_max_global_storage       | BASE TABLE
+ james         | public       | james_max_user_message_count   | BASE TABLE
+ james         | public       | james_max_user_storage         | BASE TABLE
+ james         | public       | james_quota_currentquota       | BASE TABLE
+ james         | public       | james_recipient_rewrite        | BASE TABLE
+ james         | public       | james_sieve_quota              | BASE TABLE
+ james         | public       | james_sieve_script             | BASE TABLE
+ james         | public       | james_subscription             | BASE TABLE
+ james         | public       | james_user                     | BASE TABLE
+ james         | public       | openjpa_sequence_table         | BASE TABLE
+ james         | public       | james_mailbox                  | BASE TABLE
+ james         | public       | james_mail                     | BASE TABLE
+ james         | public       | james_table_rows_view          | VIEW
+ (22 rows)
+
+```
+
+## 增量备份前提
+
+```
+# pgAdmin4 query tool
+# all tables add column updated_at
+
+ALTER TABLE IF EXISTS public.james_domain 
+ADD COLUMN updated_at timestamp without time zone NOT NULL DEFAULT localtimestamp;
+
+# 未验证
+--table='james_*' --where="james_*:updated_at > '2024-01-01'"
+```
+
+
 
 ## ~~变更服务单元(未完成)~~
 

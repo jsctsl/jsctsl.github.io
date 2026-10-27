@@ -309,3 +309,15 @@ For more help, type: --help <topic>, where topics are:
                from another tool or shellscript.
 ```
 
+### 双网口设置
+
+```
+1、VMware Host Client 配置
+1.1、添加标准虚拟交换机
+1.2、添加端口组
+1.3、添加 VMkernel 网卡
+
+2、ESXi Shell 设置
+
+```
+

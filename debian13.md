@@ -279,3 +279,24 @@ sudo mount -a
 
 ```
 
+### DNS
+
+```shell
+# 原始方式
+nano /etc/resolv.conf
+
+nameserver 221.131.143.69
+nameserver 112.4.0.55
+
+# ========================================================== #
+# 现代 Debian 默认
+sudo apt install --no-install-recommends -y systemd-resolved
+
+nano /etc/systemd/resolved.conf
+# 修改内容
+DNS=221.131.143.69 112.4.0.55
+
+# 重启
+systemctl restart systemd-resolved
+```
+

@@ -78,7 +78,7 @@ WorkingDirectory=-/srv/james-server-jpa-guice
 ExecStartPre=/usr/bin/sleep 120
 TimeoutStartSec=180
 # ExecStart=/srv/james-server-jpa-guice/startup.sh
-ExecStart=/srv/jdk-11.0.2/bin/java -javaagent:james-server-jpa-app.lib/openjpa-3.2.0.jar -Dworking.directory=. -Djdk.tls.ephemeralDHKeySize=2048 -Dlogback.configurationFile=conf/logback.xml -jar james-server-jpa-app.jar
+ExecStart=/srv/jdk-11.0.2/bin/java -javaagent:james-server-jpa-app.lib/openjpa-3.2.0.jar -Dworking.directory=. -Djdk.tls.ephemeralDHKeySize=2048 -Dlogback.configurationFile=conf/logback.xml -Duser.timezone=Asia/Shanghai -jar james-server-jpa-app.jar
 # 如果服务意外退出，自动重启
 Restart=always
 RestartSec=300

@@ -103,6 +103,19 @@ sudo apt depends '^default-jre$'
 
 ```shell
 sudo apt install --no-install-recommends -y -s --download-only --auto-remove '^default-jre$'
+sudo apt install --no-install-recommends -y --auto-remove 
+
+
+mariadb-server/stable 1:11.8.6-0+deb13u1 amd64
+  MariaDB database server binaries
+
+sudo apt install --no-install-recommends -y mariadb-server/stable
+sudo apt install --no-install-recommends -y mariadb-server=1:11.8.6-0+deb13u1
+sudo apt install --no-install-recommends -y mariadb-server:amd64
+
+sudo apt install --no-install-recommends -y mariadb-server:amd64=1:11.8.6-0+deb13u1
+
+sudo apt install --no-install-recommends -y -t stable mariadb-server:amd64=1:11.8.6-0+deb13u1
 
 # --no-install-recommends 不安装推荐包
 # -y 自动确认
@@ -128,7 +141,7 @@ sudo apt remove default-jre
 ### 删除包及配置文件
 
 ```shell
-sudo apt purge --autoremove mysql-common
+sudo apt purge --autoremove mariadb-server:amd64=1:11.8.6-0+deb13u1
 
 # --autoremove 删除依赖
 ```
