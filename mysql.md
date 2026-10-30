@@ -4,6 +4,9 @@
 c:\mysql\bin\mysqldump.exe -u root -p test > test.sql
 
 备份数据库 test 到sql脚本文件
+
+c:\mysql\bin\mysqldump.exe -u root -p test user > test_user.sql
+备份表 user 到sql脚本文件
 ```
 
 ### 恢复
