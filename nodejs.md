@@ -4,10 +4,6 @@
 
 ```
 
-
-
-
-
 ### http server
 
 ```
@@ -69,5 +65,23 @@ server.listen(PORT, () => {
 # HTTP 服务器已启动：http://localhost:3000
 
 # 浏览器访问 https://localhost:3000
+```
+
+### macOS
+
+```
+pkg 安装路径
+Node.js v24.22.2 to /usr/local/bin/node
+npm v11.19.1 to /usr/local/bin/npm
+
+```
+
+### 插件
+
+```
+# HTML 压缩
+chensheng@ChenShengdeMacBook-Pro tailwindcss4 % npm install -D html-minifier-terser
+
+
 ```
 
